@@ -8,7 +8,7 @@
 Summary: Cross platform network backup for Linux, Unix, Mac and Windows
 Name: bacula
 Version: 5.0.0
-Release: 12%{?dist}
+Release: 13%{?dist}
 # See LICENSE for details
 License: GPLv2 with exceptions
 Group: System Environment/Daemons
@@ -55,6 +55,8 @@ Patch17: bacula-5.0.0-catalog_backup.patch
 Patch18: bacula-5.0.0-retention_period.patch
 #728693
 Patch19: bacula-5.0.0-logwatch.patch
+#839249
+Patch20: bacula-5.0.0-name-length.patch
 
 URL: http://www.bacula.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -394,6 +396,7 @@ pushd bacula-%{version}
 %patch17 -p1 -b .catalog
 %patch18 -p3 -b .period
 %patch19 -p2 -b .logwatch
+%patch20 -p2 -b .name-length
 
 
 # Remove execution permissions from files we're packaging as docs later on
@@ -1039,6 +1042,10 @@ fi
 
 
 %changelog
+* Fri Nov 28 2014 Petr Hracek <phracek@redhat.com> - 5.0.0-13
+- Increase bacula daemon name to 64 characters
+Resolves: #839249
+
 * Tue Oct 02 2012 Lukáš Nykrýn <lnykryn@redhat.com> - 5.0.0-12
 - fix alternatives in scriptlets (#862240)
 
@@ -1211,14 +1218,14 @@ fi
 * Wed Jul 25 2007 Andreas Thienemann <andreas@bawue.net> 2.0.3-9
 - Corrected the %%post alternatives calls. Fixing #249560.
 
-* Wed Jul 19 2007 Andreas Thienemann <andreas@bawue.net> 2.0.3-8
+* Thu Jul 19 2007 Andreas Thienemann <andreas@bawue.net> 2.0.3-8
 - Moved some files around in the %%files section and refactored
   spec parts a bit
 - Fixed up the catalog-backup scripts by including them in the
   alternatives system
 - Applied tls patch fixing some tls disconnection issues.
 
-* Thu Jul 18 2007 Andreas Thienemann <andreas@bawue.net> 2.0.3-7
+* Wed Jul 18 2007 Andreas Thienemann <andreas@bawue.net> 2.0.3-7
 - Minor specchanges, mostly typos in the comments
 - Incorporated minor changes from dgilmore's review.
 
@@ -1249,10 +1256,10 @@ fi
   local machine. A later revision might parse the bacula-dir.conf file
   and just connect to the db to see if it's running.
 
-* Sat Feb 28 2007 Andreas Thienemann <andreas@bawue.net> 2.0.2-1
+* Wed Feb 28 2007 Andreas Thienemann <andreas@bawue.net> 2.0.2-1
 - Further updates on the spec
 
-* Sat Feb 18 2007 Andreas Thienemann <andreas@bawue.net> 2.0.2-1
+* Sun Feb 18 2007 Andreas Thienemann <andreas@bawue.net> 2.0.2-1
 - Much work on the spec
 - Updated to 2.0.2
 
