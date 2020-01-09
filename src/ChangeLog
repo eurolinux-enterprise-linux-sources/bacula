@@ -1,0 +1,1679 @@
+              Changelog on version 5.0.x
+
+General:
+
+Release Version 5.0.0
+
+21Jan10
+- Remove double secs in pruning output
+
+20Jan10
+- Fix priority mgnt in lock manager
+- Fix FD crash when plugin running and cancel given
+- Stop backup sooner after cancel
+- Make a missing plugin during backup fatal
+- Update sample-query.sql
+- Use make_catalog_backup.pl by default
+
+19Jan10
+- Update makeall and add README to release directory
+- Remove debug code
+- Add more authors
+- Fix possible memory leak
+- Fix bscan bug introduced with serialization change
+- Add a few status client commands
+- Make Ukraine po to compile
+- Update po files
+- More spec improvements from bug #1455
+- Enhance FD status to have level
+
+18Jan10
+- Fix logwatch install in bacula.spec. Patch from bug #1454
+- Remove /etc/logwatch directories from spec file. Patch supplied by bug 
+  #1456
+- Don't remove spec files -- fixes bug #1458
+- Remove FI sanity check code that does not apply after a VirtualFull
+- Make Attr/record FI non-fatal if different -- possibly temp + add new session 
+  record types
+- Keep serial from overruning with bad data
+
+17Jan10
+- Add info message on how to stop the file relocation test
+
+15Jan10
+- Add new Path tables to grant and drop scripts
+- Fix #1450 about FirstWritten not updated with bscan
+- Fix error message in grant_postgresql_privileges
+
+12Jan10
+- Fix SQLite table creation script
+
+11Jan10
+- Add Job.Reviewed field
+- Enable priority checks in lockmanager
+- Change DB version from 11 to 12
+- Fix Win64 build
+- Fix Win32 build
+
+10Jan10
+- Fix the subject to something easy to delete
+- Turn off messages test -- it creates tons of emails
+
+09Jan10
+- Optimize strtok usage in ua_cmds
+
+08Jan10
+- Remove old code requiring different storages for migration
+- More checking for OpenSSL in configure
+
+06Jan10
+- Add make_catalog_backup.pl script that uses env variables and disk file to 
+  pass database password for backup
+- Modify the sql query to get alphabetical order of clients when selecting the 
+  most recent backup for a client
+
+05Jan10
+- Remove warning about make_catalog_backup.pl
+
+04Jan10
+- Add Ingres configuration
+- Fix Ingres ID definition that caused seg fault
+- Add commit from Stefan Reddig
+
+03Jan10
+- Simplify initgroups definition for AIX
+- initgroups definition is ok on aix >= 5
+
+31Dec09
+- Ignore scripts/bacula_config
+- Remove QWT from configure -- not used
+
+28Dec09
+- Revert to configure with C due to old prototypes on some systems
+- Make ioctl_req_t test less g++ dependent
+- Make ioctl test more exact
+- Try to force configure compiles to be more exact
+- Rebuild configure to handle Marco's changes
+- Clean old configure
+
+27Dec09
+- Let --enable-libtool and --disable-libtool determine if we build plugins and 
+  drop the extra configure option
+
+26Dec09
+- Lets use a xattr specific constant and not the stdio BUFSIZ which is kind of 
+  platform dependend.
+- Attempt to autoconfigure ioctl_req_t
+- Lets not mix initialized stack variable with uninitialized ones in the same 
+  definition.
+- Added some handling of EPERM and EOPNOTSUPP which seem to be returned when 
+  you try to retrieve the system extended attributes a non root user.
+- Lets not orphan the buffer returned by extattr_namespace_to_string as it 
+  seems by looking at the code it strdups the string it returns so no need to 
+  bstrdup it ourself.
+
+25Dec09
+- Show that plugins are enabled or not in configure output.
+
+24Dec09
+- Plugins are dependable on libtool now so cleaned the Makefiles and the fd 
+  plugins are only build when --enable-plugins is set and libtool is used.
+- Clarify catalog grant permissions message
+
+23Dec09
+- Fix depend for changes to SRC variables.
+- Drop the usage of macros within macros as it seems some platforms native 
+  makes don't support that. While converting the Makefiles also made things 
+  somewhat more uniform in naming the lib objects.
+
+22Dec09
+- Add scripts/bacula_config script that displays configure options and results
+- Continue to support Batch Mode with PostgreSQL < 8.2
+
+21Dec09
+- M_ABORT Bacula If batch insert is turned on when we try to open a connection 
+  and thread safe is not enabled
+- Try to fix problem on FreeBSD with unsupported extended attributes which 
+  gives lots of orphaned buffers as seen in regression testing.
+
+20Dec09
+- Fix thread safe detection in ./configure
+
+19Dec09
+- Update bweb deb
+- Fix breload make_catalog_backup.pl rights
+
+17Dec09
+- LSBize Debian init scripts
+
+15Dec09
+- Fix #undef of lock manager
+
+13Dec09
+- Remove checkout master
+- Add more debug for Solaris regression timeouts
+- Make SUN C++ compiler stop complaining about enum definition.
+- Use %c and %n in bootstrap in default bacula-dir.conf
+
+11Dec09
+- remove a ref to sqlite
+- Remove ua_prune.c debug code
+- Print any traceback or bactrace
+- Fix old stuff in Makefile
+- Allow deadlock manager on FreeBSD, MacOSX and SunOs
+- Add allowcompress-test
+- Add test for AllowCompress option
+
+10Dec09
+- Eliminate compiler warning
+- Rework Mac OS 10.6 mtio.h fix
+- Attempt to fix mtio.h problem on Mac 10.6
+- Allow mount to wake job waiting for op
+- Make wait longer for better recycling
+- Fix another volume_lock dlock order problem
+- Fix and add ASSERT debug
+- Fix compilation problem with lockmgr
+
+09Dec09
+- Fix misnamed variable
+- Reorder lock_volumes and dlock in SD to avoid race conditions
+- - five more updates to manpages options I had forgotten in a corner, - a 
+  reformated and edited page for bsmtp - a brand new one for btraceback, based 
+  on the Problem Resolution Guide and discussions (to be continued?) on this 
+  list.
+- Fix compilation pb
+- Add mutex some priority info for SD
+- Add info in dump about lock priority
+- Fix CentOS/RHEL detection
+- Fix #defines when lock manager turned off
+- Add USE_LOCKMGR_PRIORITY switch to enable new priority management
+- Add Macro BTHREAD_MUTEX_PRIORITY(p) and lib/mutex_list.h to manage locks
+- Make pthread_mutex_init/destroy compatible with bthread_mutex_t
+- Fix SD Vol+dev lock race bug
+
+08Dec09
+- Add init/destroy function for both p/bthread_mutex_t object
+- Add new bthread_mutex_t object that check mutex priority order
+- Add test for reload command
+- More bstrncat doc
+- Add bstrncat comments
+- Fix bug #1431 about bad reload command. Still an object to free in this 
+  case.
+- Fix bug in bstrncat
+- Temp fix for prune crash
+
+07Dec09
+- Update win32 testing
+- Add new test for win32
+- Add cleandir option
+- Add tool to edit configuration file remotely
+- Add more sm_check debug
+- Add memory corruption checks
+
+06Dec09
+- Fix CentOS/RedHat test in regress
+- Add win32 regress helper
+- Attempt to fix SQLite seg fault when listing fields
+- Allow Dir to come up before use
+- Fix python plugin to use the new get functions instead of the get_ functions.
+- Fix seg fault in new AllowCompression code
+- Use restore count from write_bsr
+- Add some doc of Win32 stuff
+- Update prototype.conf to have latest stuff
+- Update techdoc + notes
+- Add AllowCompression feature
+
+05Dec09
+- Remove debug
+- Fix #1403 about windows directory attributes not well restored
+- Change old get_Jobxxx to getJobxxx
+- Fix Win32 build after adding Base Job code
+- Fix backup-bacula-test
+- Add new idea to kernstodo
+- Improved database warning message
+
+04Dec09
+- Init lmgr in btape
+
+03Dec09
+- Disable SQLite2 code in cats.h
+- Remove SQLite from configure
+- Remove SQLite2 scripts
+- Fix configure.in
+
+02Dec09
+- Remove JobMedia.Copy references
+- bvfs: update bvfs_test
+- update
+- Remove brestore_ from bvfs table, use Job::HasCache instead of knownjobid 
+  table
+- Update po files
+- Finally... the 100% of bacula spanish !!! ;-)
+- Apply Postgres 8.4 SQL_ASCII fix
+- Ignore bweb.conf in gui/bweb
+- Apply manpage patches
+
+01Dec09
+- Fix backup-bacula regression
+- Remove support for SQLite 2
+- Fix rpm spec files bug #1428 + #1420
+- Fix include MySQL libs to use shared object. Fixes bug #1427
+- Fix search to include 64 bit libs for --with-dbi option
+- Change all log.d to logwatch in RedHat specs
+
+30Nov09
+- Add config doc in INSTALL
+
+23Nov09
+- Add another project to the projects file
+- don't follow packagemaker permission recommendations
+- OSX Installer: update README
+- OSX installer: fix for a bug in 10.5 packagemaker, --id argument required
+- OSX installer: switch to new pmdoc packagemaker format
+- Add another project to the projects file
+- Add new project
+
+22Nov09
+- Add error count to Fatal job errors
+
+21Nov09
+- Attempt to keep tls_shutdown from hanging
+
+16Nov09
+- Add completion for unmark
+
+15Nov09
+- Add Job and File Retention to Pool
+- Remove version id
+- Change some console.c socket calls into class calls
+- Revert "Reduce diff output in weird-files-test"
+- Reduce diff output in weird-files-test
+
+14Nov09
+- Fix bug #1367 by creating an empty query.sql file
+
+13Nov09
+- update
+- Display only backups when running a new job
+- Add list_backup, list_restore functions
+- update
+- Add optional type= argument to .jobs command. You can list only Backup, 
+  Restore,... jobs.
+
+12Nov09
+- autocomplete restore mode
+
+11Nov09
+- update
+- Fix segfault on basejob code
+- Replace POOL_MEM by POOLMEM to avoid segfaults
+- Fix base-job-test with Mysql
+- Remove extra _ of _dbg_print_db func
+- Update BDATE
+- fix segfault on redhat4
+
+10Nov09
+- Add base-job-test to regress
+- update
+
+09Nov09
+- Optimize SQL to determine file selection with directories. It is enabled for 
+  ascii path.
+
+07Nov09
+- Drop svn Id
+
+06Nov09
+- Add Solaris regress comments
+
+05Nov09
+- More debug when test fails
+- Add SITE_NAME and EMAIL to cdash report
+- Display a message if catalog max_connections setting is too low
+
+04Nov09
+- Apply James' conio patches
+- Update po
+- A small changes on bacula-es translate. Now, we go on ~90% !!!
+- Fix double send of attributes introduced in 84aabba7cee82f0c1f6dae8882a2ee0bb26306ca
+- Check pthread_mutex_lock return code in lockmgr
+
+03Nov09
+- Remove debug code in concurrent-jobs-test
+- Remove debug code in encrypt-bug-test
+- Remove annoying debug messages in four-jobs-test
+
+02Nov09
+- Increase width of ls size. Fixes bug #1409
+- Fix buffer clobber when editing SQL error
+- Fix false zombie errors in FD during regression
+- Merge branches 'master' and 'kaboom'
+- Add -m option to DIR,FD,SD to dump kaboom output
+- avoid orphan memory in testls
+
+01Nov09
+- tab-completion ok
+- When using .help item=, we display only usage part
+- Add bat to Win32 build and install
+- Add more debug for zombie jobs
+- Get regress bacula stop messages when debug on
+- Fix SD DCR race condition that causes seg faults
+- Stop regression tests after 30 minutes
+- Commit configure
+- Add more debug on failed source-addr regression
+- Set use_libtool expicitly to yes so our other checks work for static tools.
+
+30Oct09
+- Rework bat so that Win32 version works better
+
+29Oct09
+- Make bat win32 build use /home/kern/bacula
+- Make non-win32 build stop on failure
+- Make win32/64 build stop on failure
+- Remove definition of unused subroutine in ua_dotcmds.c
+- Revert James' patch to simplify the Win32/64 build process
+
+28Oct09
+- disable debug in win32 revision
+- update bat on win32 project file
+
+27Oct09
+- Small fix to Eric great patch for readline commandcompletion so it also 
+  compiles on non gcc compilers.
+- Add readline completion for commands and argument
+
+26Oct09
+- Fix another messages error problem pointed out by Eric
+
+25Oct09
+- Disable messages-test in automatic
+- Show an other deadlock in messages.c
+- Change W/G to Wanted/Granted in lock dump
+- fix multi-console problem for bat on win32
+- change Jmsg to Qmsg in low level routine
+- Set tries to 1 for a non-timeout mount or unmount operation.
+- Fix comment
+- bat: change info order in Job view
+- Use Qmsg instead of Jmsg when fides_mutex is locked in close_msg()
+- simplify the link process for win32/win64
+
+24Oct09
+- initialize lmgr in bat
+- add messages-test to regression suite
+- update tools with lmgr
+- force lock manger init
+- add lmgr to bconsole
+- Fix deadlock detection to work in daemon mode
+- Implement syslog on Windows
+- Make all ABORT and ERROR_EXIT msgs go to syslog
+- Fix ref to dequeuing_msgs
+
+23Oct09
+- Disallow Qmsg when despooling
+- Fix Qmsg race condition reported by Eric
+- add test for bad messages ressource
+- bat: Display a nice graphic on media usage depending on the average size for 
+  this mediatype.
+
+22Oct09
+- bat: add volume capacity estimation in mediaview
+- bat: try to center InChanger bullet
+- bat: Use green/red bullet for InChanger in mediview
+- bat: Don't set Expire field unless LastWritten is ok
+
+21Oct09
+- Make new configure per Marco's request
+- bat: add new Expired button in MediaView
+- fix vtape test
+- Redirect errors to /dev/null and only run uname -p on Linux where we know it 
+  works. This is probably the most portable way of doing things.
+
+20Oct09
+- Add MediaView form that displays the Media list in a QTableWidget. It permits 
+  to search and sort media. Rename current "Media" tab to "Pool" as it displays 
+  Pools
+- Permit to use MediaId or VolumeName in MediaEdit panel
+- add StringList to handle locations, volstatus and mediatypes
+- add dot functions to list volstatus, locations and mediatypes
+- update bacula32.def
+- Add .volstatus command
+- Add new MediaView
+- permits "update slot(s)" and "label barcodes slot(s)" command
+
+19Oct09
+- Don't use uname -i but uname -p
+- Added support for selecting the correct libdir on Linux
+- fix status slots command when SD slots are mixed
+- Test only master now
+
+18Oct09
+- update fr.po
+- Added acl and xattr regression tests for FreeBSD
+- Use getfattr and setfattr on Linux not attr as that is a XFS tool which works 
+  too but is not native.
+- Don't enable SUN compiler by default and make the configdir configurable.
+- Add test when ActionOnPurge=None Add test for update volume=xxx actiononpurge=yyy
+- fix crash on exchange restore fail
+- Update project 5 (ActionOnPurge) with current status
+- chmod new regress script
+- update regress
+
+17Oct09
+- Ensure that Ubuntu /var/run is created in init.d scripts suggested by nick 
+  <nick@fisk.me.uk>
+- Implement Dan's suggestion to avoid IPv6 problems
+- Add makeall for release
+- On release, make only a simple tag
+- Fix Windows build
+
+16Oct09
+- Don't download and build fakeroot as part of make -C platforms/osx
+- More Win installer changes
+- Update installer
+- Do some additional checks.
+- Add Marco's run regression wrapper script
+- Possible fix for problem with Volume in another drive
+- Make new configure from Marco's configure.in
+- Try to unmount by running the unmount command specified in the config on file 
+  and dvd devices.
+- Fix switching read device reported by Nicolae Mihalache <mache@abcpages.com>
+
+15Oct09
+- Lets free the variable in the right part of the loop.
+- Use bfree_and_null
+- Change bsnprintf to normal strncpy
+- Add comments to fileregexp test
+- Add more debug in filregexp test
+- Eliminate compiler warning
+- Fix bug #1391 Job status improperly set due to subtle variable overload 
+  problem
+
+14Oct09
+- Add release scripts
+- add regress variables to functions.pm
+
+13Oct09
+- Update date
+- Fix stupid error
+- Avoid error when git-version doesn't exist
+- Convert some old %x into %p for pointers
+- Fix #1352 about double free with regexp and big filenames on windows
+
+11Oct09
+- Small update to cache the current attrspace we are saving and make a private 
+  copy of that string representation.
+- Change acl and xattr errors from Qmsg to Jmsg
+- Add comment
+- Recursively call fix_device_block_write_error on error
+- Fix changing read device during VirtualFull in SD
+- Eliminate possible false error message
+- Fixed ifdefs
+
+10Oct09
+- Add posix acls stored in xattrs on FreeBSD
+- Removed last direct message output by replacing Qmsg by Mmsg
+
+09Oct09
+- Add comment on OpenBSD not supporting the extattr functions (anymore ?)
+- Add new Feature Requests to projects file
+- Fix ifdefs
+- Change strcmp to bstrcmp
+- fix bash/sh problem in disk-changer.in
+- Fix some comments
+- remove old db_get_int_handler()
+- Add support when extattr_get_file is supported but extattr_get_link is 
+  not.
+- Regenerated config.h.in
+
+08Oct09
+- Implement transfer and listall command in mtx-changer and disk-changer 
+  scripts
+- Add new autochanger command to get all information about content
+
+07Oct09
+- As things are no longer as generic rename the generic to the linux interface 
+  (b.t.w. OSX also implements this interface)
+- Just as with serializing first unserialize all xattr structures in memory and 
+  then walk that list for restoring them.
+- delete the alist in the destroy function
+- Implement the extattr xBSD interface Moved some code around to be able to 
+  reuse the encoding and decoding for both the extattr and xattr interface Use 
+  an alist for storing the xattr list so we don't have to count the number of 
+  xattr first
+- Use extattr interface for all xBSD filesystems. Added OpenBSD also to the 
+  mix.
+- As it seems FreeBSD doesn't have the llistxattr or listxattr interface as 
+  Linux, OSX and NetBSD have but has an interface named extattr. This is a 
+  first breakdown to implement that interface.
+
+05Oct09
+- Make Checksum as default when not using FileSet->Include->Options->BaseJob
+- Change debug level
+- Fix postgresql MD5 missing field
+- Fix unwanted printout in strip test
+- Fix concurrent Job recycle bug #1288
+- Fixed inverted logic
+- Remove useless ScratchPool refs from Bat media list
+
+03Oct09
+- Little fixes for the action_on_purge command
+- Remove obsolete truncate_on_purge settings
+- Implement action_on_purge command
+- Implement the ActionOnPurge setting for pools and individual volumes
+- Implement truncate on purge setting
+- Add a MaxVolBytes test that create over 100 Vols
+- Add some error messages in insane buffer size cases
+- Fix bug #1382 newly created disk volumes -> file not found warning
+
+01Oct09
+- Cause the tree widget selected to keep up with the tab widget selected
+
+30Sep09
+- Send checksum only when the FD will use it
+- remove debug
+- Allow for external CFLAGS to overwrite the CFLAGS in this script.
+
+29Sep09
+- Change grep -e to egrep and use -c instead of using wc.
+- Implement console 'timeout' feature using bacula socket timers
+- revert the update_bacula_table script change with bad indexes
+- Add index modification in update_sqlite/sqlite3/postgresql scripts
+- Remove the inx4 index for SQLite2/3 (FilenameId, PathId) on File table. 
+  Replace it by an index over (JobId, PathId, FilenameId).
+
+28Sep09
+- Attempt to fix MySQL SQL error
+
+27Sep09
+- Make sure we use the right chmod for Solaris
+- Fix Win32 build
+- Fix compiler warning
+
+26Sep09
+- Remove gnome-console
+- Update man pages
+- Implement store_size32 and store_size64
+- Correct regression tests to use Pool 'File'
+
+25Sep09
+- Up max vol size
+- Define File Pool and limit size to 5G
+- Fix Alpha ifdefing -- should fix bug #1359
+
+22Sep09
+- Remove the file_fp_idx index for Postgresql (FilenameId, PathId) on File 
+  table. It is useless for common usage, and causes performance issues. This 
+  index fragments over the time and the update cost grows very quickly. (This 
+  index is not present on Mysql schema)
+
+21Sep09
+- update speed-test
+- update speedtest
+- speed-test: small fix
+
+20Sep09
+- Update to slightly newer config.guess and config.sub
+- Fix compile error on Mac
+- Generate new configure
+- Reorder configure test for cleaner print output
+
+19Sep09
+- Implement support of keeping readall capabilities after UID/GID switch
+
+18Sep09
+- Remove redundant includes of pwd.h and grp.h headers
+- find_one_file: Remove unreliable and redundant access(2) directory check
+- Fix link rules
+- Force nightly-disk regress to 3.0.3
+
+17Sep09
+- speed-test: small fix
+- speed-test: Add basejob argument to test basejob speed
+- Add new test
+- Fix conf to use make as requested by Martin Simmons a long time ago
+- Restore comments
+- Fix for sqlite, now it works
+- Fix seg fault in ignoredir code
+- more mkdir -p changes
+- small fix
+- Restrict Join using JobTDate to a selection of JobIds
+- Fix for sqlite
+- Make several dir names unique to avoid test collisions
+- Fix and document new queries
+- Use new query for Mysql and Sqlite for basejob + accurate
+- update sql query for basefile+accurate
+- Change regression scripts to use mkdir -p to avoid spurious errors
+- Fix some job-start changes
+- more job-restart code
+
+16Sep09
+- Fix sql query for mysql
+- Fix sql query
+- Fix sqlite3 syntax
+- fix sql
+- update db_get_file_list() to use StartTime instead of FileIndex
+
+15Sep09
+- Update restore menu 12 explanation
+
+12Sep09
+- Try to distinguish CentOS/RHEL
+
+11Sep09
+- Modify tools to be able to correctly install testls for regress
+- Create bigendian() inline to simplify code
+- Set Volume Poll Interval to 5 mins by default
+- Apply Frank's slash patch
+
+10Sep09
+- Reduce runscript wait times
+- Update Win32 README.mingw
+- Add patch for more SD info fix
+- Add patch for bug #1371
+- Fix seg fault in SD bug #1371
+- Add append log to tape SD tests
+- Add more info when SD connection refused
+- Fix possible termination problem
+
+09Sep09
+- Keep valgrind happy
+- Fix Exclude Dir Containing ignored when scanning the top_level dir
+- Update the new exclude-dir-test with multiple Include {} section and different 
+  Exclude Dir Contain directive.
+- Add patch for #1370
+- Fix #1370 about the implementation of the "Exclude Dir Containing" option on 
+  FD.
+- Add new exclude-dir-test
+- Add patch for 3.0.2 release
+- Fix #1369 about segfault when using ExcludeDirContaining before defining 
+  Options{} block.
+- Verify if the Exclude Dir Containing directive does his job
+- Add a regress script for Exclude Dir Containing option
+
+08Sep09
+- Remove bigendian check from autoconfig system
+- check endianness at runtime in md5.c
+- Fix minor issues in the osx installer package builder.
+- Fix -p/-P in bscan.8 man page
+
+07Sep09
+- fix compilation warning
+- Make output of new commands .lsdir/.lsfile more usable. Fix Bvfs with new 
+  db_list object
+- Fix header defines
+- Remove some #ifdef-ed code and make it just as the acl and xattr code use a 
+  const bool to enable the code.
+- Redone comments
+- Move restore struct defintions to seperate include file. Small change to 
+  acl.h and xattr.h to use define inline with other header files.
+- Move finderinfo restore into seperate function so we can use cleaner coding 
+  in the restore loop.
+- Loose #ifdef and use const bool wrapper for some cleaner coding.
+- Added support for acl and xattr regression test on Solaris
+- Apply Marco's git format-patch patches for bugs #1365 and #1366
+- This patch should fix bug #1366
+- This patch should fix bug #1365
+
+06Sep09
+- Commit Mac pathlen patch
+- Increment minor version to avoid future conflict
+- Fix bug #1368. Increase default path/file length to 2048
+
+05Sep09
+- Add acl script code for Mac
+- Up timeout for rewind and changer on btest script
+- Try to fix zombies in next-vol-test
+
+04Sep09
+- Fix broken editing code
+- Use edit routine instead of %f for rates
+- Implement BlockChecksum in Device
+- btape: Add speed command and test drive speed with Bacula blocks
+
+03Sep09
+- btape: Add speed command
+- btape: Add speed information on qfill and raw command
+- Commit patch for: Fix bug #1355 Director crashes with double free in Accurate 
+  SQL query
+- Include file,blk in btape fill output
+- Create exit_code for fill with multiple tapes
+- Fix #1364 and #1363 about compression buffer error.
+
+02Sep09
+- fix variable name
+- Work on certification scripts
+- Eliminate DDS-4 in favor of tape + create btape-test-changer test
+
+01Sep09
+- Many debug code fixes in regression scripts
+- Attempt to fix SQLite3 seg fault in list routines
+- Merge master with SF
+- Update tape tests for hardware certification
+- Rename .lsdirs/.lsfiles/.update to .bvfs_xxx to avoid confusion with future 
+  commands
+- Update tape tests for hardware certification
+- Eliminate xattr.c compiler warning
+
+31Aug09
+- Prohibit copy and assignment in db_list_ctx
+- Use new db_list_ctx class instead of bad POOLMEM*
+- Exclude OSX resource forks from saving using the xattr code Exclude OSX acl 
+  data from saving using the xattr code when normal acl mode is also enabled. 
+  Make excluding certain xattr in the generic functions somewhat easier for 
+  certain OS specific attributes.
+- Fix Win32/64 build
+
+30Aug09
+- Remove old subroutine prototype
+- prohibe copy and assignment in Bvfs module
+- Fix bug #1355 Director crashes with double free in Accurate SQL query
+
+29Aug09
+- Fix bug #1357 Verify jobs fail when job has zero files
+- Rework verify-voltocat-test and add to normal tests
+
+26Aug09
+- Release orphanned buffers in accurate code
+- Fix possible seg fault in db_get_int_handler in accurate code
+- Update JobBytes only for Verify jobs when computing checksum
+- Add BaseJob option to fileset
+
+25Aug09
+- Suppress some error messages generated after cancelling a job
+
+24Aug09
+- Apply and commit Lorenz Schori <lo@znerol.ch> patch for OSX
+- Apply Lorenz' OSX patch
+- update basejob code to use checksum during accurate check
+- Close bug #1351 SQLite2 to SQLite3 conversion
+- Remove unnecessary subroutine import definition
+
+23Aug09
+- Test of git commit.
+- bat: fix variable name
+- bat: Simplify the code to make TableWidget in read-only
+- Free Volume in several places. Fixes virtual-changer problem and possibly bug 
+  #1346.
+- Add SD Volume debug code
+
+22Aug09
+- Don't print different filesystem. Will not descend message if directory 
+  explicitly excluded
+- capitalize bytes in message
+
+21Aug09
+- Prune a few dev tests
+- Made shorter developers test
+- Rework the bsock.h class to put public structures last
+- Update AUTHORS file
+- Integrate patch for building dmg on OSX from Lorenz Schori <lo@znerol.ch>
+- Add commas in num files for estimate command
+
+20Aug09
+- in status slots command, unlock db just after sql query
+
+19Aug09
+- Add BWEBCONF env variable to specify the bweb.conf path without touching the 
+  Bweb.pm file with lighttpd
+- Fix bat crash due to alignment diff in bat and core code
+- Fix acl-xattr-test by using attr
+- Add BWEBCONF env variable to specify the bweb.conf path without touching the 
+  Bweb.pm file with lighttpd
+- Ensure that timestamp put in SQL log
+
+15Aug09
+- prevent status page from requesting status before it has been brought to the 
+  front
+- Move global acquire lock to lock by device
+- Restrict acquire to one job at a time
+- Fix acquire.c locking
+- Try to fix acquire not to block during despooling
+- Add fullname parameter to btime in order to debug regress script.
+- No need to flush the members of the xattr link cache as they are not dynamically 
+  created. Small oversight from my side, was thinking I had a memory leak.
+- fix couple of segfault in acl/xattr code
+- Eliminate git pull in config_dart
+- Some small fixes to the counting and some small relayout of small code 
+  sniplets.
+- Lets first output statistics before freeing them. Saves a rather stupid 
+  segmentation fault.
+- Fix merge conflict leftover
+- Add all acl and xattr related variables which are either global or already 
+  part of the JCR into a simple structure and reference that from the JCR 
+  structure.
+
+14Aug09
+- Some small fixes to the counting and some small relayout of small code 
+  sniplets.
+- Lets first output statistics before freeing them. Saves a rather stupid 
+  segmentation fault.
+- Ignore regress time.out file
+- Fix merge conflict leftover
+- Add all acl and xattr related variables which are either global or already 
+  part of the JCR into a simple structure and reference that from the JCR 
+  structure.
+- fix compilation problem reported by Dan
+- Correct spelling of writing -- reported by Dan
+- Loose void pointer and use C++ supported declaration elsewhere defined 
+  structure.
+- Move global variables into jcr private xattr data structure so we can have 
+  parallel saves of xattr on solaris.
+
+13Aug09
+- update lock manager to get better traces
+- Fix files wiped out by merge
+- Missed commiting one file last time
+- bat: Add a re-run button on job info page, that allows to run the selected 
+  job with the same properties (level, pool, etc...)
+- bat: small fix on hrule
+- fix missing copyright
+
+12Aug09
+- Make new big-virtual-changer test. Test concurrency
+- fix offset in new lsdirs/lsfiles command
+- add comments and list special dirs in .lsdirs
+- Add .lsfiles, .lsdirs, .update command to interface user with bvfs object
+- More comments
+- Update virtual regress comments
+- bat: fix sql with volreadtime volwritetime bat: add drive=0 in update slots 
+  command
+- bat: Put the content panel as a child of the Storage item bat: use slot 
+  selection in update slots command and in label command
+
+11Aug09
+- bat: fix volreadtime/volwritetime and messages in stderr about unknown 
+  slots
+- Change backup-acl to acl-xattr-test and make it skip if acl/xattr not installed
+- Use tmp instead of /tmp + fix strip-test so diff works
+- Make regexwhere use tmp rather than /tmp
+- Remove non-portable i option on sed + create tmp dir
+- connect button callback
+- display content on doubleclick only if storage and autochanger
+- bat: Make new autochanger content working
+
+10Aug09
+- bat: display a Warning icon when having Errors>0 and Status=T
+- Pull Philipp Storz' bacula.spec changes for OpenSuSE build service
+- try to make content table work!!
+- Implement MaximumConcurrentJobs for SD devices
+- try to insert data on table content
+- update content interface
+
+09Aug09
+- continue storage content panel
+- Fix bug #1344 show pool displayed wrong variable for maxvolbytes
+- Fix compiler warnings in acl and xattr code
+- Fix screw up with setting JobLevel and JobType
+- Change version
+- Fixed references to xattr_link_cache_entry to use xattr_link_cache_entry_t
+- Changes due to code review by Kern added.
+- Move enum from protos.h to filed.h and move defines to top of filed.h
+- Added some more ENOENT supressing.
+- Small indent change
+- Small change to comments
+- Added comment on entry points
+- Added missing ENOENT switch case.
+- Fix problem with counting xattr and returning a non-ok on count 0, also added 
+  some extra comment and make sure the xattr_value_list is initialized to NULL 
+  and checked on bail_out.
+- Loose default_stream parameter.
+- Changed snprintf to bsnprintf
+- Use bstrncpy instead of strncpy
+- Fixed Jmsg4 to Mmsg4
+- Added support for counting xattr errors and only print a limited set of 
+  errors but count all. The lower level functions now store there error message 
+  in jcr->errmsg so the upper level routines have access to them.
+- Added support for counting acl errors and only print a limited set of errors 
+  but count all. The lower level functions now store there error message in 
+  jcr->errmsg so the upper level routines have access to them.
+- Small changes to ifdef layout.
+- Drop unneeded target for libbacfind.a
+- Moved the berrno as a local variable of the function and not a local context 
+  variable. Same as previous change for acl.c
+- Make sure it compiles and moved the berrno as a local variable of the function 
+  and not a local context variable. Moved tri-state enum to protos.h
+- Moved list of supported xattr to start of per OS implementation like in 
+  acl.c
+- Imported patch from older git tree.
+- bat: init storage content view
+
+08Aug09
+- Fix cats.h date
+- Start adding Incomplete Job status
+- bat: display a Warning symbole when having Errors>0 and Status=T
+- Add data end tracking an attribute spooling
+- Fix compiler warning in bvfs code
+- Use 64 bit ftell and fseek in send_bootstrap_file
+- Turn of some debug code
+- Ignore src/tools/bvfs_test
+
+07Aug09
+- bvfs: Add example to list files versions bvfs: Fix directory listing bvfs: 
+  Add limit/offset implementation to save resources on director bvfs: Create 
+  cache tables on the fly when using Bvfs object (for testing)
+- Bvfs: Create cache tables when updating the cache if they don't exist
+
+06Aug09
+- fix makefile for bvfs_test
+- add option to truncate cache table during startup for bvfs_test
+- add user handler to print directory add -j, -p to bvfs_test tool
+- Document FT_DELETED FileIndex=0 special value in database Schema
+- Add the rest of files for new Bvfs
+- Add a new Bvfs class that implements brestore instant navigation cache inside 
+  Bacula. Works for Mysql, Postgresql and Sqlite3
+- bat: fix compiler warning for unreferenced argument
+- fix mysql case problem in bweb/bresto
+- Use the sqlite3_changes to implement sql_affected_rows()
+- remove QFormLayout, and use QGridLayout instead
+
+05Aug09
+- in bweb, fix warning
+- add a default bconsole command to bweb starthttp script.
+
+04Aug09
+- remove Page Selector keyword from main bat screen
+- fix small pb in bweb starthttp script
+- document bweb+lighttpd
+- update display_log to display a message if no logs are found
+- Apply patch for regress from Frank Sweester
+- connect button from mediainfo to real actions
+- bat fill mediainfo fields
+- bat: Go to the media info panel when double-click on job page or media 
+  list
+
+03Aug09
+- Add new mediainfo panel to bat
+- update windows bat.pro
+- small fix for bresto
+- update doc
+- don't reset bstat, rstat, dstat in stop_bacula
+- add test for list basefiles and new list files
+- don't reset bstat, rstat, dstat in stop_bacula
+- add list basefiles command make list files compatible with basefiles
+- fix the basefile catalog update
+- work on stats, fix bug with batch connection
+- enable FileSet { Options { accurate = 'pm5' } }
+- add variables for stats
+- display a message with basejobids
+- stop copy/migration using basejobs
+- replace free&NULL by free_and_null
+- fix
+- display base jobs during restore
+- fix segfault
+- check size also replace mtime/ctime by lstat field
+- check for purge job
+- purge basefiles at the same time than files
+- make regression ok
+- use batch connection
+- fix update_job_end
+- update HasBase in catalog
+- remove some debug
+- seems to work:!!!
+- make base backup work
+- update
+- init base file
+- compile
+- fix sql for postgresql
+- make sql part
+- take ideas from previous try
+- Remove useless title
+- fix layout, now ok
+- remove list volume menu from joblist
+- make double click work with joblist
+- add refresh and delete event
+- fix script name
+
+02Aug09
+- Remove old sqlite3 build from bacula.spec
+- Move bat from bacula.spec to bacula-bat.spec
+-  Remove installing gconsole start script from Makefile.in
+- Split mtx into its own spec file
+- Remove docs from spec
+- Split docs into bacula-docs.spec
+- Move bat and mtx to their own spec files
+- Remove docs from spec
+- Split docs into bacula-docs.spec
+-  Remove installing gconsole start script from Makefile.in
+- Split mtx into its own spec file
+- Remove docs from spec
+- Split docs into bacula-docs.spec
+- Move bat and mtx to their own spec files
+- Remove docs from spec
+- Split docs into bacula-docs.spec
+- Move bat from bacula.spec to bacula-bat.spec
+-  Remove installing gconsole start script from Makefile.in
+- Split mtx into its own spec file
+- Remove docs from spec
+- Split docs into bacula-docs.spec
+- Move bat and mtx to their own spec files
+- Remove docs from spec
+- Split docs into bacula-docs.spec
+- Move bat from bacula.spec to bacula-bat.spec
+-  Remove installing gconsole start script from Makefile.in
+- Split mtx into its own spec file
+- Remove docs from spec
+- Split docs into bacula-docs.spec
+- Move bat and mtx to their own spec files
+- Remove docs from spec
+- Split docs into bacula-docs.spec
+- Move bat from bacula.spec to bacula-bat.spec
+-  Remove installing gconsole start script from Makefile.in
+- Split mtx into its own spec file
+- Remove docs from spec
+- Split docs into bacula-docs.spec
+- Move bat and mtx to their own spec files
+- Remove docs from spec
+- Split docs into bacula-docs.spec
+- Move bat from bacula.spec to bacula-bat.spec
+-  Remove installing gconsole start script from Makefile.in
+- Split mtx into its own spec file
+- Move bat and mtx to their own spec files
+- Remove docs from spec
+- Split docs into bacula-docs.spec
+- Move bat and mtx to their own spec files
+- found a bug. Joblist page would not come up unless dockPage was called when 
+  page was opened with initial paramaters.
+
+01Aug09
+- Remove docs from spec
+- Split docs into bacula-docs.spec
+- Add bacula-docs.spec.in
+- Add new form to see job details
+- Add bacula-docs.spec
+- Remove bacula-docs.spec
+- Split docs into bacula-docs.spec
+- Remobe bacula-docs.spec
+- Split docs into bacula-docs.spec
+- missing less than beforehistory | grep svn :D
+
+31Jul09
+- Split docs out of bacula.spec
+- Insert the tabbed widgets as opposed to adding to the end.
+- Don't dock the page for dirstat and restore tree until the page selector tree 
+  widget is clicked.
+- I like this sorting method better.
+- Update bacula.spec
+- Apply quick fix from Ulrich about the last feature.
+- Continue work on bacula.spec
+
+30Jul09
+- rename the free_and_null macro
+- fix test name
+- update new features
+- chmod +x regress/tests/multi-storage-test
+- Allow restore from multiple storage
+- Update News
+- update tool
+- Modify enable/disable commands to show only appropriate Jobs.
+
+29Jul09
+- Add ACL check for client in estimate command
+- Change time_t by utime_t in accurate function
+- Start reworking 3.0.2 bacula.spec file
+
+28Jul09
+- Display the job_zoom view when backup is finished
+
+27Jul09
+- Add DESTDIR to Makefile
+- Add file to build html doc
+- add changelog link
+- Add changelog on the main menu
+- update doc
+- add downloads pages for all lang
+- Remove the Patch section and add the new Download area
+- Link to new downloads.php
+- Add tool to convert nasty sourceforge download page to a simple one
+- Update
+- Update README for binary install tests
+
+25Jul09
+- change free_and_null function to a macro
+- Add Spanish files translated
+
+24Jul09
+- Add format to a fprintf
+- Attempt to fix SQLite seg fault problem
+- Fix Expired option in media list to select Used media
+- Set selection items on top.
+- this should resolve issues that people are having with this splitter. If you 
+  try to make it too large, it just snaps back.
+
+23Jul09
+- Fix int/int32_t problem in accurate_add_file
+- Permit to filter on the directory name as for file
+- fix bad english sentence
+- add function to simplify free and null operation on pointers
+- Remove Qt 4.4 code so it compiles on 4.3 (setHeaderHidden)
+
+22Jul09
+- Apply idea of part of Graham's tidy-bsr-source.patch, but modified
+- Fix bug #1337 Console tries to build with SSL when libssl-dev not installed
+- Modify setJobStatus so cancel has same priority as fatal errors
+- Fix Solaris compiler warning in signal.c
+- Change selection behavior in the director status screen.
+- Do not restore spliiter settings if the settings do not contain settings for 
+  that splitter.
+- This is committing most of the patch received from Eric.
+
+21Jul09
+- Merge branch 'bwebII'
+- use $conf, $tmp, $script, $rscript in accurate test
+- Fix Spanish files translated
+
+20Jul09
+- es.po merged with bacula.pot 3.0.2
+
+19Jul09
+- This is the change that may be used in the future to resolve the issue with 
+  text input required during a console communication.
+- Final changes
+- Add es lingua
+- Fix Spanish build
+- Final changes
+- Add first cut bsys spec
+- update bweb INSTALL
+- update INSTALL
+
+18Jul09
+- Add info on bweb + lighttpd
+- Fix bat command line input bug
+- Don't show the connection message after first connection is made
+
+17Jul09
+- update copyright year
+- Optimize a bit the running job view
+- Fix bresto file relocation box
+- Update copyrights
+- Put back old status icon
+- Fix sql query for sqlite on suse10 on copy job
+- Fix Spanish files translated
+
+16Jul09
+- Remove print and save menu
+- Simplify the main screen, removing the status dir console icon and the "go 
+  back" one
+- fix spell
+- fix case problem in field name
+- update for status slots
+- Replace info_msg by send_msg in status_slots for bat
+- update ChangeLog for 3.0.2
+- document @help
+- Ignore TAGS
+- +x the test file
+- test with file instead of vtape
+- Add test for bug 1288
+- Add slot field in storage operations Update update volume page
+- Use BUILD_DIR in default conf
+- Fix #1323 about a problem when mounting a requested volume during a restore.
+- Use the read as primary color in bweb
+- Fix script for vtape tests
+- Fix graph_font parameter to work with graph module Avoid warning messages in 
+  apache log with graph module
+- Update
+- update INSTALL file
+- update apache section in INSTALL file and try to choose better color for 
+  graphs.
+- Fix Spanish files translated
+
+15Jul09
+- Parameterize depkgs directory
+- Add back bootstrap to FD
+- Make CONF::init header and .c file agree about types
+- update
+- update cloud project
+- Force the client_encoding to SQL_ASCII when database is already using this 
+  mode.
+- Fix #1335 about postgresql error message during copy session
+- Add documentation about new restore menu
+- remove non-essential directories
+- Fix Win64 build
+- Add more example SD Device configurations
+
+14Jul09
+- Apply patch in bug #1315 by McMichaeli that fixes scripts/logwatch
+- Add more output when spooling and no space left
+- fix next-vol-test
+- Fix postgresql driver bug that displayed <NULL> rows from time to time.
+- Small fix on accurate code for new restore menu option
+- Change default save dir to sbindir in bacula-dir.conf
+- update project files for project 2
+- Should fix #1323
+- Implement project 2, about new restore menu
+- Update date
+- Remove some whitespace
+- Send bootstrap directly from DIR to SD
+
+13Jul09
+- add -u to diff
+- revert changes
+- Update new features
+- Create build scripts for Win64 somewhat equilavent to the Win32 ones
+
+10Jul09
+- Print correct JobId in bls, should fix #1331
+- Rebuild configure
+- Apply python detect patch from Bastian Friedrich <bastian.friedrich@collax.com>
+- Add --with-hostname to ./configure
+
+09Jul09
+- More changes in es.po (37%)
+- add --with-hostname to ./configure
+- Changed ACL_OTHER into ACL_OTHER_OBJ as IRIX doesn't seem to have ACL_OTHER. 
+  Fixes bug #1333
+
+06Jul09
+- Remove non-portable reference to pthread mutex
+- Display command output by default
+- Add new Spanish files translated
+
+05Jul09
+- Turn off bat debug code
+- Fix compilation bug
+- Small change to allow the compiler to optimize it easier due to the constant.
+
+04Jul09
+- Add new Spanish files translated
+
+03Jul09
+- Correct registered trademark notice
+- Should fix the first part #1323 about the restore option "List Jobs where a 
+  given File is saved" wich display deleted files
+
+02Jul09
+- Add estimate accurate doc
+- add accurate=yes/no test for estimate
+- Update help page with accurate=yes/no
+- Add estimate accurate=yes/no ebl Change the code to check jcr->accurate and 
+  not jcr->job->accurate
+- Add estimate test
+- Make estimate command accurate compatible. Should fix #1318
+- Fix es concepts compile problem
+- Update for Spanish
+- Another fix for bug #1311 to get the correct last_full_time
+- Add new Spanish files translated
+- Update
+- Add base of Spanish manual
+- Add directory to Spanish docs; Spanish (es.po) 25% translated
+
+01Jul09
+- Fix false zombie detection in next-vol-test
+- Add test with accurate mode (it shows the #1323 bug)
+- Fix bug #1317 Allow duplicate jobs = no does not work
+- Eliminate double job report when do_xxx_init() returns failure
+- Fix regress tests to handle new default job name
+- fix copy-volume-test
+- update Item 2
+- Add debug code to MaxDiffInterval
+
+29Jun09
+- Change bacula-dir.conf default job name from Client1 to BackupClient1
+- Document #1318 about estimate and accurate mode
+
+28Jun09
+- Add a column for job type to the jobs table
+- Fix missing case for NetBSD xattr restores.
+
+27Jun09
+- Fix Win32 build -- turn off lockmgr and remove lockmgr defs
+- Added symbols required for win32 build
+
+25Jun09
+- Modify xattr.c and acl.c not to fail the job on errors. This should fix bug 
+  #1305.
+
+23Jun09
+- Fix 2 rather big bugs in the xattr and acl code and fix a small memory leak 
+  on a particular code path for Linux xattr/acl handling.
+- update newfeature with project 37
+- Update FileSetId when initializing job.
+- fix compilation problem
+- add a note about /sys/class/scsi_tape/nst0/default_compression, fix #1314
+- Add '*' when volume is online when displaying volume list in restore. Should 
+  complete project 31.
+
+21Jun09
+- remove bnet_fsend and use class call
+- Re-fix bug #1311 if MaxDiffInterval exceeded ensure job upgraded
+
+20Jun09
+- Fix bat install for 3.x
+
+19Jun09
+- Add a boolean to console class to allow for the warning popup, except in 
+  cases where I want to prevent the popup. So far this is only for purging 
+  jobs.
+- Correct a misspelling in a relatively trivial spot.
+- Add job type and first volume of the job to the 4th pane the version table. 
+  This is so that when looking at what version to restore with copy jobs the 
+  user can make a better decision as to which job to restore from
+
+18Jun09
+- Back out previous maxdiff patch, which is broken
+- Add all Job Types to job_type_to_str() for bat
+- Commit maxdiff patch
+- Fix bug #1311 if MaxDiffInterval exceeded ensure job upgraded
+
+17Jun09
+- Fix bug #1305 make errors obtaining acl during backup non-fatal
+- Commit btape fill patch
+- Fix bug #1309 inappropriate error message during btape fill command
+- Fix bug #1307 AllowHigherDuplicates=no prevents automatic job escalation
+
+16Jun09
+- Update VirtualFull doc + BSys course dates
+
+14Jun09
+- move 3.0.0 patches to 3.0.x dir
+- Add 3.0.x patches dir
+- Update with 2009 Vote
+- Forgot to add the images for the new button.
+- Add a previous page button to the button bar.
+
+13Jun09
+- Add feature in pages to have a console command that does not set the console 
+  current. Then also use that feature in joblist to purge or delete a job.
+- Add a stringlist and a foreach after populating to at least acknowledge to 
+  the user that a new fileset. Bat would not show the fileset until the database 
+  table had the fileset which was not until used.
+
+12Jun09
+- Remove non-portable code referencing pthread_t fixes bug #1308.
+- Remove non-portable code referencing pthread_t
+- Create patch that may fix bug #1298 and bug #1304, which causes an SD crash 
+  after canceling a job.
+
+11Jun09
+- When looking at what got backed up from a windows differential, found a bug 
+  where it would create many "Bases". This fixes it subtly.
+
+09Jun09
+- Add checkbox widgets to filter out copy and migration jobs.
+
+08Jun09
+- Attempt to get bat conf file installation to work with DESTDIR
+- Commit migrate patch for bug #1303
+
+05Jun09
+- Improve error messages when a migration sql query is used and correct the 
+  problem identified in bug #1303 with starting Job names containing spaces.
+- Fix #1306 when building static bconsole
+
+04Jun09
+- Did not intend to leave those debugging lines there.
+- fix vtape test to work with the latest trunk
+- Reorder project file with poll result
+
+03Jun09
+- update
+
+01Jun09
+- Setting actions up like this I think is better. No restore from job or time 
+  if more than one job selected.
+- Add columns for first media and volume count. Change some semantics of how 
+  signals execute functions when a selection list is changed.
+- Prevent warnings from showing as dialog boxes that can interupt multiple 
+  operations performed in a foreach.
+
+31May09
+- Sort the lists after population so that drop downs are sorted.
+
+30May09
+- A fix for mysql database sql syntax.
+- Add columns to the tree to show read/write time, scratch pool, recycle 
+  count.
+- Somehow I was losing the refresh jobs action. This should keep it in.
+
+29May09
+- untabify
+- Add ids on command.tpl to fix #1300
+
+28May09
+- Correct incorrect placement of trap for m_firstpopulated.
+- There was an issue with empty directories. The director would print node xxx 
+  has no children and bat would interpret that as a directory. This fixes it 
+  but it may not be the best solution.
+- update
+
+27May09
+- Make sure that vtape directory is created during -tape tests ebl change grep 
+  -e to grep -E to make source-addr-test working as expected
+- Simplify mysql bresto part. Should be faster, but need tests
+
+26May09
+- On vacation I am having a little fun !!
+- Add documentation for new directives DirSourceAddress and FDSourceAddress
+- Apply Steve Polyack patch to add DirSourceAddress and FDSourceAddress directives. 
+  That permits to choose the outgoing interface.
+- make fileregexp-test working with git repository
+
+25May09
+- Apply Marco's patch: mvw Allow acl and xattr to be explicitly enabled and 
+  fail the configure if we are asked to enable acl or xattr support and the OS 
+  doesn't support acls or xattrs.
+- Add more Spanish site modifications
+
+24May09
+- Commit changes for Spanish site
+
+23May09
+- Create Client record in database at startup -- makes bat work better
+- Disable scratchpool-pool-test because it hangs
+- Rework printed message when files are purged on restore
+- Turn off useless End of file message during restore.
+- When doing a tree selection restore, look at the PurgedFiles column in the 
+  first JobId, and if non-zero, the Job was purged, so do not do selection
+- Yet another try to get qmake to install bat correctly
+
+21May09
+- Add Catalog = all to the default Messages resource
+
+20May09
+- Add Spanish directory
+- Fix race in director job start which was allowing the number of concurrent 
+  jobs to exceed the maximum
+
+19May09
+- Comment out broken fake-autochanger change
+- Speed up media list generation when using "compute with directories" option
+- fix dates
+- update
+- Fix #1029 about resolution address order. Thanks to David.
+- Add patch for #1029
+- During jcr destruction hold jcr_chaing lock only for minimum time necessary. 
+  This should fix the SD deadlock in bug #1287.
+- Simplify messages printed by SD when reserve fails. This should fix bug 
+  #1285
+- Add sleep in vtape changer to simulate real hardware
+
+17May09
+- speed up mysql to compute restore table ebl speed up mysql when computing 
+  media list ebl fix media list display ebl fix bresto problem with drag&drop
+
+16May09
+- Fix libxml dependency for rh7 per Pasi Kärkkäinen <pasik@iki.fi>.
+- Create archivedir
+
+15May09
+- Back out unwanted change. Should fix problem reported by Yuri
+- add index on temporary table to speed up mysql part during restore
+- Fix display of / on bfileview
+- Yet another attempt to get qmake to generate valid Makefiles that installs 
+  the binaries. It seems to require the binary to exist at qmake time
+- Apply fix to sql_cmds.c suggested by Ulrich Leodolter <ulrich.leodolter at 
+  obvsg.at> which prevents restore by file selection from using Copy jobs.
+- fix drag&drop
+
+14May09
+- Add new nagios_plugin_check_bacula.tgz from Masopust, Christian <christian.masopust 
+  at siemens.com>
+- Reduce bconsole help to fit in 80 columns kes Add bconsole @help command kes 
+  Fix Show FileSet command to handle spaces
+- Allow specification of base daemon resource name. --with-basename=<name>
+- Fix bat to automatically use installed bat.conf
+- bat not installed even if configured. Fix by working around apparent bug in 
+  qmake
+
+13May09
+- update
+- Turn on lockmanager when using DEVELOPER flag
+
+10May09
+- note that vtape is not ready for production
+- remove unused file
+- More scripting stuff
+
+09May09
+- More scripting parameterization
+- More parameterization of scripts
+- First cut parameterize better regression tests
+
+07May09
+- fix mysql problem with the restore query
+- rename JobHistory to JobHisto
+
+06May09
+- update os table
+- ebl update german version
+- update supported os table
+- change the ugly grey background on symbole and images to white
+- small fix
+
+05May09
+- ebl Make working the "compute with directories" option --This line, and those 
+  below, will be ignored--
+
+04May09
+- Updates
+- add screenshots
+- Add screenshot and update french main page
+- add screenshots
+- update
+- Add new images
+- Fix ldconfig problem in client only build.
+- don't display copies like in bconsole
+- Added extra logging to determine the exchange server in use
+
+03May09
+- Fixes for client build.
+- Update main page
+- Update
+- update
+- Only define winapi's for 32 bit build. Already defined for 64 bit apparently...
+- Change GetComputerName to GetComputerNameEx so that in a cluster we get the 
+  name of the vserver instead of the local machine. Added prototypes for 
+  GetComputerNameEx which appear to be missing.
+
+02May09
+- 3.0.1
+- Don't run backup at same time as restore to avoid deadlock in concurrent 
+  test
+
+01May09
+- update
+- Update documentation
+
+30Apr09
+- Ran into a problem deleting a volume. This fixes it.
+- Update News
+- Fix purged restore prompting
+- Final changes
+
+29Apr09
+- update
+- Add bypool option
+- add bypool option
+- Fix error message
+- Fix bug #1282 Setting job.Priority in python crashes director by checking if 
+  string addr is NULL. Not tested.
+- Fix bug #1281 allow all on restore command line to restore pruned JobIds 
+  without prompting.
+- Add vectorized bat image
+
+28Apr09
+- Check for job_canceled() in fd_plugin code
+- Update Win32/64 table creation to have new DB version 11 format
+- Remove illegal Options in Exclude of default Win32/64 bacula-dir.conf
+- This is the fix to http://bugs.bacula.org/view.php?id=1276. The select class 
+  was just not working with the new requirements of setting and clearing the 
+  notify.
+
+27Apr09
+- Fix bug #1274 where a migration job can be canceled like the original job by 
+  the MaxRunTime directive.
+- Added fix for bug #1275 where acl or xattr data is saved for virtual filenames 
+  generated by filed plugins.
+
+26Apr09
+- Set slot max to 60
+- Permits to eject Used tape
+- update ScriptAlias
+- Remove Reposition info message
+- Fix platform scripts not to clean configured files during 'make clean' use 
+  'make distclean' to clean everything.
+
+25Apr09
+- Add build tag for distribution name.
+
+21Apr09
+- Fix copyright + trademark name
+- add doc for new VerId option
+
+20Apr09
+- Fix suggested in bug 1273
+
+16Apr09
+- Add additional mysql connection debug code
+- Fix bug #1246 Sometimes access denied with VSS enabled. UCS conversion cache 
+  was not properly flushed at the end of a Job
+
+15Apr09
+- Update
+- add missing BACULA define
+
+14Apr09
+- update
+- Fix bug #1268 Full Max Run Time cancels jobs (when Max Run Time = 0).
+- Ignore scripts/bacula-dir.conf.maxruntime
+- revert pool changes and correct the problem
+
+13Apr09
+- Add new maxruntime test -- not yet working
+- more fixes about pool=defaults
+- more fixes
+- fix more pool problem
+- fix pool problem
+
+12Apr09
+- specify pool in label process to avoid problem
+- use scripts/bacula-dir.conf instead of bin/bacula-dir.conf
+- Add debug message when checking database encoding
+- Test postgresql encoding at the start of the test
+
+11Apr09
+- Modify insertion of read Volumes in SD to be done before the drive reservation. 
+  This ensures that a Volume to be read will not be reserved for writing.
+- Clean old patchnotes
+- Turn developer back on
+
+13Oct09
+Release Version 3.0.3:
+16Jul09
+Release Version 3.0.2:
+29Apr09
+Release Version 3.0.1:
+05Apr09
+Release Version 3.0.0:
+28Dec08
+Release Version 2.4.4
+27Oct08
+Release Version 2.4.3
+26Jul08
+Release Version 2.4.2
+07Jul08
+Release Version 2.4.1
+04Jun08
+Release Version 2.4.0
+25Jan08
+Release Version 2.2.8
+
