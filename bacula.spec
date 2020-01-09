@@ -1,12 +1,9 @@
 %global uid 133
 %global username bacula
-%global _hardened_build 1
-
-%global aarchrev .1
 
 Name:               bacula
 Version:            5.2.13
-Release:            23%{aarchrev}%{?dist}
+Release:            13%{?dist}
 Summary:            Cross platform network backup for Linux, Unix, Mac and Windows
 # See LICENSE for details
 License:            AGPLv3 with exceptions
@@ -43,8 +40,6 @@ Patch6:             %{name}-5.2.13-logwatch.patch
 Patch7:             %{name}-help-update.patch
 Patch8:             %{name}-aarch64.patch
 Patch9:             %{name}-non-free-code.patch
-Patch10:            %{name}-multilib.patch
-Patch11:            %{name}-name-length.patch
 
 BuildRequires:      desktop-file-utils
 BuildRequires:      perl
@@ -329,8 +324,6 @@ Provides check_bacula support for Nagios.
 %patch7 -p1 -b .help-update
 %patch8 -p1 -b .aarch64
 %patch9 -p1 -b .non-free-code
-%patch10 -p1 -b .multilib
-%patch11 -p1 -b .name-length
 cp %{SOURCE2} %{SOURCE3} %{SOURCE4} %{SOURCE5} .
 
 # Remove execution permissions from files we're packaging as docs later on
@@ -338,7 +331,7 @@ find updatedb -type f | xargs chmod -x
 
 %build
 build() {
-export CFLAGS="$RPM_OPT_FLAGS -fPIE -Wl,-z,relro,-z,now -I%{_includedir}/ncurses"
+export CFLAGS="$RPM_OPT_FLAGS -I%{_includedir}/ncurses"
 export CPPFLAGS="$RPM_OPT_FLAGS -I%{_includedir}/ncurses"
 %configure \
         --sysconfdir=%{_sysconfdir}/bacula \
@@ -395,9 +388,8 @@ popd
 
 %if 0%{?fedora} || 0%{?rhel} >= 6
 pushd src/qt-console/tray-monitor
-        /usr/bin/qmake-qt4 tray-monitor.pro
+        /usr/bin/qmake-qt4
         make %{?_smp_mflags}
-        cp -f .libs/bacula-tray-monitor .
 popd
 %endif
 
@@ -425,7 +417,7 @@ install -p -m 644 -D src/qt-console/images/bat_icon.png %{buildroot}%{_datadir}/
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{SOURCE13}
 
 # QT Tray monitor
-install -p -m 755 -D src/qt-console/tray-monitor/bacula-tray-monitor %{buildroot}%{_sbindir}/bacula-tray-monitor
+install -p -m 755 -D src/qt-console/tray-monitor/.libs/bacula-tray-monitor %{buildroot}%{_sbindir}/bacula-tray-monitor
 install -p -m 644 -D src/qt-console/tray-monitor/tray-monitor.conf %{buildroot}%{_sysconfdir}/bacula/tray-monitor.conf
 install -p -m 644 -D src/qt-console/images/bat_icon.png %{buildroot}%{_datadir}/pixmaps/bacula-tray-monitor.png
 desktop-file-install --dir=%{buildroot}%{_datadir}/applications %{SOURCE14}
@@ -489,27 +481,6 @@ for dir in src src/cats src/console src/dird src/filed src/findlib src/lib src/p
         mkdir -p %{buildroot}%{_includedir}/bacula/$dir
         install -p -m 644 $dir/*.h %{buildroot}%{_includedir}/bacula/$dir
 done
-
-# fix multilib issues
-mv $RPM_BUILD_ROOT%{_includedir}/bacula/src/config.h \
-   $RPM_BUILD_ROOT%{_includedir}/bacula/src/config-%{__isa_bits}.h
-
-cat >$RPM_BUILD_ROOT%{_includedir}/bacula/src/config.h <<EOF
-#ifndef BACULACONF_H_MULTILIB
-#define BACULACONF_H_MULTILIB
-
-#include <bits/wordsize.h>
-
-#if __WORDSIZE == 32
-# include "config-32.h"
-#elif __WORDSIZE == 64
-# include "config-64.h"
-#else
-# error "unexpected value for __WORDSIZE macro"
-#endif
-
-#endif
-EOF
 
 %clean
 rm -rf %{buildroot}
@@ -915,46 +886,6 @@ fi
 %{_libdir}/nagios/plugins/check_bacula
 
 %changelog
-* Fri Aug 07 2015 Petr Hracek <phracek@redhat.com> - 5.2.13-23.1
-- Update SPEC file
-  Related: #1195625
-
-* Mon May 11 2015 Petr Hracek <phracek@redhat.com> - 5.2.13-22.1
-- Update SPEC file
-  Related: #1195625
-
-* Mon May 11 2015 Petr Hracek <phracek@redhat.com> - 5.2.13-21.1
-- Increase bacula daemon name to 64 characters
-Resolves: #1195625
-
-* Wed May 06 2015 Petr Hracek <phracek@redhat.com> - 5.2.13-20.1
-- PIE and RELRO check
-Resolves: #1092525
-
-* Thu Jul 31 2014 Petr Hracek <phracek@redhat.com> - 5.2.13-19.1
-- Bump version
-Resolves: #1059611
-
-* Tue Mar 18 2014 Petr Hracek <phracek@redhat.com> - 5.2.13-18.1
-- Add aarch64 support
-Resolves: #1059611
-
-* Tue Feb 4 2014 Brendan Conoboy <blc@redhat.com> - 5.2.13-17.1
-- Per Marcin, add aarch64 to bacula-multilib.patch.
-
-* Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 5.2.13-17
-- Mass rebuild 2014-01-24
-
-* Wed Jan 15 2014 Honza Horak <hhorak@redhat.com> - 5.2.13-16
-- Rebuild for mariadb-libs
-  Related: #1045013
-
-* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 5.2.13-15
-- Mass rebuild 2013-12-27
-
-* Tue Dec 17 2013 Petr Hracek <phracek@redhat.com> - 5.2.13-14
-- Resolves: #881146 Multilib issue
-
 * Mon Jul 15 2013 Petr Hracek <phracek@redhat.com> - 5.2.13-13
 - make dependency of bacula packages on bacula-libs RHEL-7 rpmdiff (#881146)
 
@@ -1361,3 +1292,4 @@ Resolves: #1059611
 
 * Mon Jan 25 2010 Jon Ciesla <limb@jcomserv.net - 5.0.0-1
 - New upstream, 5.0.0.
+
