@@ -8,7 +8,7 @@
 Summary: Cross platform network backup for Linux, Unix, Mac and Windows
 Name: bacula
 Version: 5.0.0
-Release: 9%{?dist}
+Release: 12%{?dist}
 # See LICENSE for details
 License: GPLv2 with exceptions
 Group: System Environment/Daemons
@@ -49,6 +49,12 @@ Patch14: bacula-5.0.0-umask.patch
 Patch15: bacula-5.0.0-tray-crash.patch
 #689400
 Patch16: bacula-5.0.0-incremental-size.patch
+#756803
+Patch17: bacula-5.0.0-catalog_backup.patch
+#802158
+Patch18: bacula-5.0.0-retention_period.patch
+#728693
+Patch19: bacula-5.0.0-logwatch.patch
 
 URL: http://www.bacula.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
@@ -385,6 +391,9 @@ pushd bacula-%{version}
 %patch14 -p2 -b .umask
 %patch15 -p2 -b .traycrash
 %patch16 -p2 -b .size
+%patch17 -p1 -b .catalog
+%patch18 -p3 -b .period
+%patch19 -p2 -b .logwatch
 
 
 # Remove execution permissions from files we're packaging as docs later on
@@ -411,7 +420,7 @@ mkdir bacula-mysql bacula-postgresql bacula-sqlite
 # Shell function to configure and build a Bacula tree
 build() {
 cp -rl ../bacula-%{version}/* .
-export CFLAGS=-I%{_includedir}/ncurses
+export CFLAGS="$RPM_OPT_FLAGS -I%{_includedir}/ncurses"
 export CPPFLAGS=-I%{_includedir}/ncurses
 %configure \
 	--sysconfdir=%{_sysconfdir}/bacula \
@@ -455,7 +464,7 @@ if test $? != 0; then
   exit 1
 fi
 
-%{__make} %{?_smp_mflags}
+%{__make} %{?_smp_mflags} NO_ECHO=
 
 }				
 
@@ -640,6 +649,10 @@ rm -vf %{buildroot}%{_libexecdir}/bacula/*.{new,old}
 mkdir -p %{buildroot}%{_localstatedir}/spool/bacula
 
 
+#Create empty log
+touch %{buildroot}%{_localstatedir}/spool/bacula/log
+
+
 # Move some files around
 mv %{buildroot}%{_libexecdir}/bacula/query.sql %{buildroot}%{_sysconfdir}/bacula/query.sql
 
@@ -724,18 +737,33 @@ fi
 #test "$1" != 0 || /usr/sbin/userdel  bacula &>/dev/null || :
 #test "$1" != 0 || /usr/sbin/groupdel bacula &>/dev/null || :
 
+%post common
+#Repare log context
+if [ -x /sbin/restorecon -a -e %{working_dir}/log ]; then
+	/sbin/restorecon %{working_dir}/log
+fi
+
 
 %post storage-mysql
+if [ $1 -gt 1 ]; then
+        /usr/sbin/alternatives --remove bacula-sd /usr/sbin/bcopy.mysql
+fi
 /usr/sbin/alternatives --install /usr/sbin/bcopy bacula-sd /usr/sbin/bcopy.mysql 50 \
 	--slave /usr/sbin/bscan bacula-bscan /usr/sbin/bscan.mysql
 
 
 %post storage-sqlite
+if [ $1 -gt 1 ]; then
+        /usr/sbin/alternatives --remove bacula-sd /usr/sbin/bcopy.sqlite
+fi
 /usr/sbin/alternatives --install /usr/sbin/bcopy bacula-sd /usr/sbin/bcopy.sqlite 40 \
 	--slave /usr/sbin/bscan bacula-bscan /usr/sbin/bscan.sqlite
 
 
 %post storage-postgresql
+if [ $1 -gt 1 ]; then
+        /usr/sbin/alternatives --remove bacula-sd /usr/sbin/bcopy.postgresql
+fi
 /usr/sbin/alternatives --install /usr/sbin/bcopy bacula-sd /usr/sbin/bcopy.postgresql 60 \
 	--slave /usr/sbin/bscan bacula-bscan /usr/sbin/bscan.postgresql
 
@@ -790,13 +818,6 @@ fi
 
 
 %post storage-common
-#Upgrade scriptlet for (#651787)
-if [ $1 -gt 1 ]; then
-	/usr/sbin/alternatives --remove bacula-sd /usr/sbin/bcopy.mysql
-	/usr/sbin/alternatives --remove bacula-sd /usr/sbin/bcopy.sqlite
-	/usr/sbin/alternatives --remove bacula-sd /usr/sbin/bcopy.postgresql
-fi
-
 /sbin/chkconfig --add bacula-sd
 
 
@@ -832,6 +853,8 @@ fi
 %{_mandir}/man8/btraceback.8*
 %dir %attr(750, bacula, bacula) %{_localstatedir}/log/bacula
 %dir %attr(750, bacula, bacula) %{_localstatedir}/spool/bacula
+%attr(640, bacula, bacula) %config(noreplace) %{_localstatedir}/spool/bacula/log
+
 %{_sbindir}/bacula
 #%%{_libdir}/bpipe-fd.so
 /usr/libexec/bacula/mtx-changer.conf
@@ -1016,6 +1039,19 @@ fi
 
 
 %changelog
+* Tue Oct 02 2012 Lukáš Nykrýn <lnykryn@redhat.com> - 5.0.0-12
+- fix alternatives in scriptlets (#862240)
+
+* Thu Sep 20 2012 Lukáš Nykrýn <lnykryn@redhat.com> - 5.0.0-11
+- Add create to logrotate to preserve selinux context (#728697)
+
+* Mon Sep 17 2012 Lukáš Nykrýn <lnykryn@redhat.com> - 5.0.0-10
+- put correct port in my.cnf (#756803)
+- shows correct job and file retention periods (#802158)
+- build with $RPM_OPT_FLAGS, show compiler commands in build log (#729008)
+- include /var/log/bacula.log and /var/log/bacula/ in logwatch (#728693)
+- ensure that /var/spool/bacula/log has correct selinux context (#728697)
+
 * Thu Jun 23 2011 Jan Görig <jgorig@redhat.com> 5.0.0-9
 - upgrade scriptlet for (#651787)
 - added chkconfig dependency (#712804)
