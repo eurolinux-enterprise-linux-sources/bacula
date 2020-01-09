@@ -24,12 +24,20 @@ prog="bacula-sd"
 CONFIG="/etc/bacula/bacula-sd.conf"
 OPTS="-c $CONFIG"
 
+if [ "$SD_USER" != '' ]; then
+	OPTS="$OPTS -u $SD_USER"
+fi
+
+if [ "$SD_GROUP" != '' ]; then
+	OPTS="$OPTS -g $SD_GROUP"
+fi
+
 checkconf() {
 	# Check if we still have our @@PLACEHOLDERS@@ in the config.
 	# If yes, refuse to start, the user has never touched the config.
 	grep -q '^[^#].*_PASSWORD@@' $CONFIG
 	if [ $? -eq 0 ]; then
-		echo -n "Error: Program has not been configured"
+		echo -n "Error: Default password in config"
 		echo_failure
 		echo
 		exit 6

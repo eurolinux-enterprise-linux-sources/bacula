@@ -8,7 +8,7 @@
 Summary: Cross platform network backup for Linux, Unix, Mac and Windows
 Name: bacula
 Version: 5.0.0
-Release: 7%{?dist}
+Release: 9%{?dist}
 # See LICENSE for details
 License: GPLv2 with exceptions
 Group: System Environment/Daemons
@@ -43,6 +43,13 @@ Patch3: bacula-pamd.patch
 #Patch11: bacula-2.4.3-orphaned-jobs.patch
 #Patch12: bacula-2.4.3-python26.patch
 Patch13: bacula-3.0.2-openssl.patch
+#651780
+Patch14: bacula-5.0.0-umask.patch
+#657297
+Patch15: bacula-5.0.0-tray-crash.patch
+#689400
+Patch16: bacula-5.0.0-incremental-size.patch
+
 URL: http://www.bacula.org
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: openssl-devel, atk-devel, ncurses-devel, pango-devel, perl
@@ -76,6 +83,8 @@ Group: System Environment/Daemons
 Provides: bacula-director = %{version}-%{release}
 Requires: bacula-director-common = %{version}-%{release}
 Requires: bacula-common = %{version}-%{release}
+Requires(post): chkconfig
+Requires(preun): chkconfig
 
 %description director-mysql
 Bacula is a set of programs that allow you to manage the backup,
@@ -93,6 +102,8 @@ Group: System Environment/Daemons
 Provides: bacula-director = %{version}-%{release}
 Requires: bacula-director-common = %{version}-%{release}
 Requires: bacula-common = %{version}-%{release}
+Requires(post): chkconfig
+Requires(preun): chkconfig
 
 %description director-sqlite
 Bacula is a set of programs that allow you to manage the backup,
@@ -110,6 +121,8 @@ Group: System Environment/Daemons
 Provides: bacula-director = %{version}-%{release}
 Requires: bacula-director-common = %{version}-%{release}
 Requires: bacula-common = %{version}-%{release}
+Requires(post): chkconfig
+Requires(preun): chkconfig
 
 %description director-postgresql
 Bacula is a set of programs that allow you to manage the backup,
@@ -127,6 +140,8 @@ Group: System Environment/Daemons
 Requires: bacula-director = %{version}-%{release}
 Requires: bacula-common = %{version}-%{release}
 Requires: logwatch
+Requires(post): chkconfig
+Requires(preun): chkconfig
 #Requires(pre): fedora-usermgmt
 #Requires(postun): fedora-usermgmt
 
@@ -165,6 +180,8 @@ Summary: Common Bacula storage daemon files
 Group: System Environment/Daemons
 Requires: bacula-storage = %{version}-%{release}
 Requires: bacula-common = %{version}-%{release}
+Requires(post): chkconfig
+Requires(preun): chkconfig
 
 %description storage-common
 Bacula is a set of programs that allow you to manage the backup,
@@ -182,6 +199,8 @@ Group: System Environment/Daemons
 Provides: bacula-storage = %{version}-%{release}
 Requires: bacula-storage-common = %{version}-%{release}
 Requires: bacula-common = %{version}-%{release}
+Requires(post): chkconfig
+Requires(preun): chkconfig
 
 %description storage-mysql
 Bacula is a set of programs that allow you to manage the backup,
@@ -199,6 +218,8 @@ Group: System Environment/Daemons
 Provides: bacula-storage = %{version}-%{release}
 Requires: bacula-storage-common = %{version}-%{release}
 Requires: bacula-common = %{version}-%{release}
+Requires(post): chkconfig
+Requires(preun): chkconfig
 
 %description storage-sqlite
 Bacula is a set of programs that allow you to manage the backup,
@@ -216,6 +237,8 @@ Group: System Environment/Daemons
 Provides: bacula-storage = %{version}-%{release}
 Requires: bacula-storage-common = %{version}-%{release}
 Requires: bacula-common = %{version}-%{release}
+Requires(post): chkconfig
+Requires(preun): chkconfig
 
 %description storage-postgresql
 Bacula is a set of programs that allow you to manage the backup,
@@ -230,6 +253,7 @@ mass storage devices.
 %package common
 Summary: Common Bacula utilities
 Group: System Environment/Daemons
+Requires(pre): shadow-utils
 #Requires: bacula-sysconfdir = %{version}-%{release}
 #Requires(pre): fedora-usermgmt
 #Requires(postun): fedora-usermgmt
@@ -358,6 +382,10 @@ pushd bacula-%{version}
 #%patch11 -p0
 #%patch12 -p0
 %patch13 -p2 -b .openssl
+%patch14 -p2 -b .umask
+%patch15 -p2 -b .traycrash
+%patch16 -p2 -b .size
+
 
 # Remove execution permissions from files we're packaging as docs later on
 find examples -type f | xargs chmod -x
@@ -592,6 +620,7 @@ install -m 644 -D %{SOURCE6} %{buildroot}%{_sysconfdir}/logrotate.d/bacula
 
 # And logwatch
 install -m 755 -D bacula-sqlite/scripts/logwatch/bacula %{buildroot}%{_sysconfdir}/logwatch/scripts/services/bacula
+install -m 755 -D bacula-sqlite/scripts/logwatch/applybaculadate %{buildroot}%{_sysconfdir}/logwatch/scripts/shared/applybaculadate
 install -m 644 -D bacula-sqlite/scripts/logwatch/logfile.bacula.conf %{buildroot}%{_sysconfdir}/logwatch/conf/logfiles/bacula.conf
 install -m 644 -D bacula-sqlite/scripts/logwatch/services.bacula.conf %{buildroot}%{_sysconfdir}/logwatch/conf/services/bacula.conf
 
@@ -698,17 +727,17 @@ fi
 
 %post storage-mysql
 /usr/sbin/alternatives --install /usr/sbin/bcopy bacula-sd /usr/sbin/bcopy.mysql 50 \
-	--slave /usr/sbin/dbcheck bacula-bscan /usr/sbin/bscan.mysql 
+	--slave /usr/sbin/bscan bacula-bscan /usr/sbin/bscan.mysql
 
 
 %post storage-sqlite
 /usr/sbin/alternatives --install /usr/sbin/bcopy bacula-sd /usr/sbin/bcopy.sqlite 40 \
-	--slave /usr/sbin/dbcheck bacula-bscan /usr/sbin/bscan.sqlite
+	--slave /usr/sbin/bscan bacula-bscan /usr/sbin/bscan.sqlite
 
 
 %post storage-postgresql
 /usr/sbin/alternatives --install /usr/sbin/bcopy bacula-sd /usr/sbin/bcopy.postgresql 60 \
-	--slave /usr/sbin/dbcheck bacula-bscan /usr/sbin/bscan.postgresql
+	--slave /usr/sbin/bscan bacula-bscan /usr/sbin/bscan.postgresql
 
 
 %preun storage-mysql
@@ -761,6 +790,13 @@ fi
 
 
 %post storage-common
+#Upgrade scriptlet for (#651787)
+if [ $1 -gt 1 ]; then
+	/usr/sbin/alternatives --remove bacula-sd /usr/sbin/bcopy.mysql
+	/usr/sbin/alternatives --remove bacula-sd /usr/sbin/bcopy.sqlite
+	/usr/sbin/alternatives --remove bacula-sd /usr/sbin/bcopy.postgresql
+fi
+
 /sbin/chkconfig --add bacula-sd
 
 
@@ -834,11 +870,12 @@ fi
 %files director-common
 %defattr(-,root,root,-)
 %doc bacula-%{version}/updatedb/
-%config(noreplace) %{_sysconfdir}/bacula/bacula-dir.conf
+%attr(640,root,bacula) %config(noreplace) %{_sysconfdir}/bacula/bacula-dir.conf
 %config(noreplace) %{_sysconfdir}/bacula/query.sql
 %config %{_sysconfdir}/logwatch/conf/logfiles/bacula.conf
 %config %{_sysconfdir}/logwatch/conf/services/bacula.conf
 %{_sysconfdir}/logwatch/scripts/services/bacula
+%{_sysconfdir}/logwatch/scripts/shared/applybaculadate
 %{_initrddir}/bacula-dir
 %{_sbindir}/bregex
 %{_sbindir}/bwild
@@ -979,6 +1016,20 @@ fi
 
 
 %changelog
+* Thu Jun 23 2011 Jan Görig <jgorig@redhat.com> 5.0.0-9
+- upgrade scriptlet for (#651787)
+- added chkconfig dependency (#712804)
+- added shadow-utils dependency (#712794)
+
+* Wed Jun 08 2011 Jan Görig <jgorig@redhat.com> 5.0.0-8
+- added applybaculadate (#651776)
+- fixed umask in make_catalog_backup.pl (#651780)
+- added support for changing bacula user and group in syconfig files
+  and changed privilegies of bacula-dir.conf (#651786)
+- fixed bscan alternatives links (#651787)
+- fixed tray monitor default config (#657297)
+- fixed showing wrong size of incremental backup (#689400)
+
 * Tue Jun 22 2010 Jan Görig <jgorig@redhat.com> 5.0.0-7
 - fixed multilib issue (#594115)
 - removed hostnames from bconsole.config (#603052)

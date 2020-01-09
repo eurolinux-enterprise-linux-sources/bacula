@@ -25,12 +25,20 @@ prog="bacula-fd"
 CONFIG="/etc/bacula/bacula-fd.conf"
 OPTS="-c $CONFIG"
 
+if [ "$FD_USER" != '' ]; then
+	OPTS="$OPTS -u $FD_USER"
+fi
+
+if [ "$FD_GROUP" != '' ]; then
+	OPTS="$OPTS -g $FD_GROUP"
+fi
+
 checkconf() {
 	# Check if we still have our @@PLACEHOLDERS@@ in the config.
 	# If yes, refuse to start, the user has never touched the config.
 	grep -q '_PASSWORD@@' $CONFIG
 	if [ $? -eq 0 ]; then
-		echo -n "Error: Program has not been configured"
+		echo -n "Error: Default password in config"
 		echo_failure
 		echo
 		exit 6
