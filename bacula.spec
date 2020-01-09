@@ -3,7 +3,7 @@
 
 Name:               bacula
 Version:            5.2.13
-Release:            13%{?dist}
+Release:            18%{?dist}
 Summary:            Cross platform network backup for Linux, Unix, Mac and Windows
 # See LICENSE for details
 License:            AGPLv3 with exceptions
@@ -40,6 +40,7 @@ Patch6:             %{name}-5.2.13-logwatch.patch
 Patch7:             %{name}-help-update.patch
 Patch8:             %{name}-aarch64.patch
 Patch9:             %{name}-non-free-code.patch
+Patch10:            %{name}-multilib.patch
 
 BuildRequires:      desktop-file-utils
 BuildRequires:      perl
@@ -324,6 +325,7 @@ Provides check_bacula support for Nagios.
 %patch7 -p1 -b .help-update
 %patch8 -p1 -b .aarch64
 %patch9 -p1 -b .non-free-code
+%patch10 -p1 -b .multilib
 cp %{SOURCE2} %{SOURCE3} %{SOURCE4} %{SOURCE5} .
 
 # Remove execution permissions from files we're packaging as docs later on
@@ -481,6 +483,33 @@ for dir in src src/cats src/console src/dird src/filed src/findlib src/lib src/p
         mkdir -p %{buildroot}%{_includedir}/bacula/$dir
         install -p -m 644 $dir/*.h %{buildroot}%{_includedir}/bacula/$dir
 done
+
+# fix multilib issues
+%ifarch x86_64 s390x ia64 ppc64
+%define wordsize 64
+%else
+%define wordsize 32
+%endif
+
+mv $RPM_BUILD_ROOT%{_includedir}/bacula/src/config.h \
+   $RPM_BUILD_ROOT%{_includedir}/bacula/src/config-%{wordsize}.h
+
+cat >$RPM_BUILD_ROOT%{_includedir}/bacula/src/config.h <<EOF
+#ifndef BACULACONF_H_MULTILIB
+#define BACULACONF_H_MULTILIB
+
+#include <bits/wordsize.h>
+
+#if __WORDSIZE == 32
+# include "config-32.h"
+#elif __WORDSIZE == 64
+# include "config-64.h"
+#else
+# error "unexpected value for __WORDSIZE macro"
+#endif
+
+#endif
+EOF
 
 %clean
 rm -rf %{buildroot}
@@ -886,6 +915,22 @@ fi
 %{_libdir}/nagios/plugins/check_bacula
 
 %changelog
+* Tue Mar 18 2014 Petr Hracek <phracek@redhat.com> - 5.2.13-18
+- Resolves: #881146 Multilib issue
+
+* Fri Jan 24 2014 Daniel Mach <dmach@redhat.com> - 5.2.13-17
+- Mass rebuild 2014-01-24
+
+* Wed Jan 15 2014 Honza Horak <hhorak@redhat.com> - 5.2.13-16
+- Rebuild for mariadb-libs
+  Related: #1045013
+
+* Fri Dec 27 2013 Daniel Mach <dmach@redhat.com> - 5.2.13-15
+- Mass rebuild 2013-12-27
+
+* Tue Dec 17 2013 Petr Hracek <phracek@redhat.com> - 5.2.13-14
+- Resolves: #881146 Multilib issue
+
 * Mon Jul 15 2013 Petr Hracek <phracek@redhat.com> - 5.2.13-13
 - make dependency of bacula packages on bacula-libs RHEL-7 rpmdiff (#881146)
 
